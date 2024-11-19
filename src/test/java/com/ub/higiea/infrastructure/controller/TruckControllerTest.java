@@ -1,6 +1,6 @@
 package com.ub.higiea.infrastructure.controller;
 
-import com.ub.higiea.application.domainservice.TruckService;
+import com.ub.higiea.application.service.domain.TruckService;
 import com.ub.higiea.application.dtos.TruckDTO;
 import com.ub.higiea.application.exception.notfound.TruckNotFoundException;
 import com.ub.higiea.domain.model.Truck;

@@ -1,11 +1,8 @@
 package com.ub.higiea.infrastructure.controller;
 
-import com.ub.higiea.application.domainservice.TruckService;
-import com.ub.higiea.application.dtos.SensorDTO;
+import com.ub.higiea.application.service.domain.TruckService;
 import com.ub.higiea.application.dtos.TruckDTO;
 import com.ub.higiea.application.exception.notfound.TruckNotFoundException;
-import com.ub.higiea.application.requests.SensorCreateRequest;
-import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

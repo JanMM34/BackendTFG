@@ -1,24 +1,22 @@
 package com.ub.higiea.infrastructure.adapters.azuremaps;
 
 import com.azure.core.models.GeoPosition;
-import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.maps.route.MapsRouteAsyncClient;
-import com.azure.maps.route.MapsRouteClientBuilder;
 import com.azure.maps.route.models.*;
-import com.ub.higiea.application.utils.RouteCalculationResult;
-import com.ub.higiea.application.utils.RouteCalculator;
+import com.ub.higiea.application.responses.RouteCalculationResult;
 import com.ub.higiea.domain.model.Location;
 import com.ub.higiea.domain.model.Sensor;
+import com.ub.higiea.domain.adapter.RouteCalculatorAdapter;
 import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class AzureMapsRouteCalculator implements RouteCalculator {
+public class AzureMapsRouteCalculatorAdapter implements RouteCalculatorAdapter {
 
     private final MapsRouteAsyncClient mapsRouteClient;
 
-    public AzureMapsRouteCalculator(MapsRouteAsyncClient mapsRouteClient) {
+    public AzureMapsRouteCalculatorAdapter(MapsRouteAsyncClient mapsRouteClient) {
         this.mapsRouteClient = mapsRouteClient;
     }
 
@@ -26,6 +24,7 @@ public class AzureMapsRouteCalculator implements RouteCalculator {
     public Mono<RouteCalculationResult> calculateRoute(List<Sensor> sensors) {
         return calculateOptimizedRoute(sensors)
                 .map(routeDirections -> {
+
                     List<Sensor> orderedSensors = new ArrayList<>(sensors);
                     // Extract optimized waypoints
                     List<RouteOptimizedWaypoint> optimizedWaypoints = routeDirections.getOptimizedWaypoints();

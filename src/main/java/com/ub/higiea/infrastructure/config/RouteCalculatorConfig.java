@@ -1,9 +1,10 @@
 package com.ub.higiea.infrastructure.config;
 
 import com.azure.maps.route.MapsRouteAsyncClient;
-import com.ub.higiea.application.utils.RouteCalculator;
-import com.ub.higiea.infrastructure.adapters.azuremaps.AzureMapsRouteCalculator;
-import com.ub.higiea.infrastructure.adapters.MockRouteCalculatorImpl;
+import com.ub.higiea.application.service.external.RouteCalculatorService;
+import com.ub.higiea.domain.adapter.RouteCalculatorAdapter;
+import com.ub.higiea.infrastructure.adapters.MockRouteCalculatorAdapter;
+import com.ub.higiea.infrastructure.adapters.azuremaps.AzureMapsRouteCalculatorAdapter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,13 +22,13 @@ public class RouteCalculatorConfig {
     }
 
     @Bean
-    public RouteCalculator routeCalculator() {
+    public RouteCalculatorAdapter routeCalculator() {
         switch (calculatorType) {
             case "azure":
-                return new AzureMapsRouteCalculator(mapsRouteAsyncClient);
+                return new AzureMapsRouteCalculatorAdapter(mapsRouteAsyncClient);
             case "mock":
             default:
-                return new MockRouteCalculatorImpl();
+                return new MockRouteCalculatorAdapter();
         }
     }
 

@@ -1,9 +1,9 @@
 package com.ub.higiea.infrastructure.adapters;
 
-import com.ub.higiea.application.utils.RouteCalculationResult;
-import com.ub.higiea.application.utils.RouteCalculator;
+import com.ub.higiea.application.responses.RouteCalculationResult;
 import com.ub.higiea.domain.model.Location;
 import com.ub.higiea.domain.model.Sensor;
+import com.ub.higiea.domain.adapter.RouteCalculatorAdapter;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class MockRouteCalculatorImpl implements RouteCalculator {
+public class MockRouteCalculatorAdapter implements RouteCalculatorAdapter {
 
     @Override
     public Mono<RouteCalculationResult> calculateRoute(List<Sensor> sensors) {

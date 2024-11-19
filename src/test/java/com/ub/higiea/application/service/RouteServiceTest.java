@@ -1,9 +1,10 @@
-package com.ub.higiea.application.domainservice;
+package com.ub.higiea.application.service;
 
 import com.ub.higiea.application.dtos.RouteDTO;
 import com.ub.higiea.application.requests.RouteCreateRequest;
-import com.ub.higiea.application.utils.RouteCalculator;
-import com.ub.higiea.application.utils.RouteCalculationResult;
+import com.ub.higiea.application.service.domain.RouteService;
+import com.ub.higiea.application.service.external.RouteCalculatorService;
+import com.ub.higiea.application.responses.RouteCalculationResult;
 import com.ub.higiea.domain.model.*;
 import com.ub.higiea.domain.repository.RouteRepository;
 import com.ub.higiea.domain.repository.SensorRepository;
@@ -19,18 +20,18 @@ import java.util.List;
 public class RouteServiceTest {
 
     private RouteService routeService;
-    private RouteCalculator routeCalculator;
+    private RouteCalculatorService routeCalculatorService;
     private RouteRepository routeRepository;
     private TruckRepository truckRepository;
     private SensorRepository sensorRepository;
 
     @BeforeEach
     public void setUp() {
-        routeCalculator = Mockito.mock(RouteCalculator.class);
+        routeCalculatorService = Mockito.mock(RouteCalculatorService.class);
         routeRepository = Mockito.mock(RouteRepository.class);
         truckRepository = Mockito.mock(TruckRepository.class);
         sensorRepository = Mockito.mock(SensorRepository.class);
-        routeService = new RouteService(routeCalculator, routeRepository, truckRepository, sensorRepository);
+        routeService = new RouteService(routeCalculatorService, routeRepository, truckRepository, sensorRepository);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class RouteServiceTest {
         Mockito.when(truckRepository.findById(truckId)).thenReturn(Mono.just(truck));
         Mockito.when(sensorRepository.findById(1L)).thenReturn(Mono.just(sensor1));
         Mockito.when(sensorRepository.findById(2L)).thenReturn(Mono.just(sensor2));
-        Mockito.when(routeCalculator.calculateRoute(sensors)).thenReturn(Mono.just(calculationResult));
+        Mockito.when(routeCalculatorService.calculateRoute(sensors)).thenReturn(Mono.just(calculationResult));
 
         Route route = Route.create(null, truck, orderedSensors, 30.0, 45L, routeGeometry);
         RouteDTO expectedRouteDTO = RouteDTO.fromRoute(route);
@@ -72,7 +73,7 @@ public class RouteServiceTest {
         Mockito.verify(truckRepository).findById(truckId);
         Mockito.verify(sensorRepository).findById(1L);
         Mockito.verify(sensorRepository).findById(2L);
-        Mockito.verify(routeCalculator).calculateRoute(sensors);
+        Mockito.verify(routeCalculatorService).calculateRoute(sensors);
         Mockito.verify(routeRepository).save(Mockito.any(Route.class));
 
     }
