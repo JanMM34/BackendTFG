@@ -1,10 +1,9 @@
 name: CD Deployment Workflow
 
 on:
-  push:
-    branches:
-      - main
-      - renaming
+  release:
+    types:
+      - published
 
 jobs:
   deploy:
@@ -37,13 +36,5 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:initial .
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:initial
-
-      - name: Build and deploy Container App
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          acrName: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}
-          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:initial
+          docker build --platform linux/amd64 -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/multi-higiea:${{ github.event.release.tag_name }} .
+          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/multi-higiea:${{ github.event.release.tag_name }}

@@ -1,18 +1,15 @@
 package com.ub.higiea.infrastructure.adapters.azuremaps;
 
 import com.azure.core.models.GeoPosition;
-import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.maps.route.MapsRouteAsyncClient;
-import com.azure.maps.route.MapsRouteClientBuilder;
 import com.azure.maps.route.models.*;
-import com.ub.higiea.application.utils.RouteCalculationResult;
-import com.ub.higiea.application.utils.RouteCalculator;
+import com.ub.higiea.application.strategies.RouteCalculationResult;
+import com.ub.higiea.application.strategies.RouteCalculator;
 import com.ub.higiea.domain.model.Location;
 import com.ub.higiea.domain.model.Sensor;
 import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 

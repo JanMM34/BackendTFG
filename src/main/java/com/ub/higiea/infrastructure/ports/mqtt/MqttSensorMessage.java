@@ -1,20 +1,22 @@
 package com.ub.higiea.infrastructure.ports.mqtt;
 
+import java.util.UUID;
+
 public class MqttSensorMessage {
 
-    private Long sensorId;
+    private UUID sensorId;
     private int state;
 
     public MqttSensorMessage(){
 
     }
 
-    public MqttSensorMessage(Long sensorId, int state) {
+    public MqttSensorMessage(UUID sensorId, int state) {
         this.sensorId = sensorId;
         this.state = state;
     }
 
-    public Long getSensorId() {
+    public UUID getSensorId() {
         return sensorId;
     }
 

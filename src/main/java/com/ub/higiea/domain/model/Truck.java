@@ -2,9 +2,13 @@ package com.ub.higiea.domain.model;
 
 import org.springframework.data.annotation.Transient;
 
+import java.util.UUID;
+
 public class Truck {
 
-    private Long id;
+    private UUID id;
+
+    private String plate;
 
     private Route assignedRoute;
 
@@ -12,19 +16,20 @@ public class Truck {
 
     private Location depotLocation;
 
-    private Truck(Long id, Route assignedRoute, int maxLoadCapacity, Location depotLocation) {
+    private Truck(UUID id, String plate, Route assignedRoute, int maxLoadCapacity, Location depotLocation) {
         this.id = id;
+        this.plate = plate;
         this.assignedRoute = assignedRoute;
         this.maxLoadCapacity = maxLoadCapacity;
         this.depotLocation = depotLocation;
     }
 
-    public static Truck create(Long id, int maxLoadCapacity, Location depotLocation) {
-        return new Truck(id, null, maxLoadCapacity, depotLocation);
+    public static Truck create(UUID id, String plate, int maxLoadCapacity, Location depotLocation) {
+        return new Truck(id, plate, null, maxLoadCapacity, depotLocation);
     }
 
-    public Long getId() {
-        return id;
+    public String getPlate() {
+        return this.plate;
     }
 
     public int getMaxLoadCapacity() {
@@ -57,4 +62,7 @@ public class Truck {
         return depotLocation;
     }
 
+    public UUID getId() {
+        return id;
+    }
 }

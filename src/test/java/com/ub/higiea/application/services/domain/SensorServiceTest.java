@@ -17,11 +17,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 public class SensorServiceTest {
@@ -34,8 +33,8 @@ public class SensorServiceTest {
 
     @Test
     void getAllSensors_ShouldReturnAllSensorDTOs_WhenRepositoryNotEmpty() {
-        Sensor sensor1 = Sensor.create(1L, Location.create(20.0, 10.0), ContainerState.EMPTY);
-        Sensor sensor2 = Sensor.create(2L, Location.create(30.0, 20.0), ContainerState.FULL);
+        Sensor sensor1 = Sensor.create(UUID.randomUUID(), Location.create(20.0, 10.0), ContainerState.EMPTY);
+        Sensor sensor2 = Sensor.create(UUID.randomUUID(), Location.create(30.0, 20.0), ContainerState.FULL);
 
         when(sensorRepository.findAll()).thenReturn(Flux.just(sensor1, sensor2));
 
@@ -59,7 +58,7 @@ public class SensorServiceTest {
 
     @Test
     void getSensorById_ShouldReturnSensorDTO_WhenSensorFound() {
-        Sensor sensor = Sensor.create(1L, Location.create(20.0, 10.0), ContainerState.EMPTY);
+        Sensor sensor = Sensor.create(UUID.randomUUID(), Location.create(20.0, 10.0), ContainerState.EMPTY);
 
         when(sensorRepository.findById(sensor.getId())).thenReturn(Mono.just(sensor));
 
@@ -72,7 +71,7 @@ public class SensorServiceTest {
 
     @Test
     void getSensorById_ShouldReturnError_WhenSensorNotFound() {
-        Long sensorId = 999L;
+        UUID sensorId = UUID.randomUUID();
         when(sensorRepository.findById(sensorId)).thenReturn(Mono.empty());
 
         StepVerifier.create(sensorService.getSensorById(sensorId))
@@ -85,7 +84,7 @@ public class SensorServiceTest {
     @Test
     void createSensor_ShouldReturnSensorDTO_WhenValidInput() {
         SensorCreateRequest request = SensorCreateRequest.toRequest(20.0, 10.0, "EMPTY");
-        Sensor sensor = Sensor.create(1L, Location.create(20.0, 10.0), ContainerState.EMPTY);
+        Sensor sensor = Sensor.create(UUID.randomUUID(), Location.create(20.0, 10.0), ContainerState.EMPTY);
 
         when(sensorRepository.save(any(Sensor.class))).thenReturn(Mono.just(sensor));
 
@@ -107,18 +106,18 @@ public class SensorServiceTest {
 
         int capacity = 5;
 
-        Sensor sensorFull1 = Sensor.create(1L, Location.create(10.0, 20.0), ContainerState.FULL);
-        Sensor sensorHalf1 = Sensor.create(2L, Location.create(15.0, 25.0), ContainerState.HALF);
-        Sensor sensorEmpty1 = Sensor.create(3L, Location.create(20.0, 30.0), ContainerState.EMPTY);
-        Sensor sensorEmpty2 = Sensor.create(3L, Location.create(20.0, 30.0), ContainerState.EMPTY);
-        Sensor sensorFull2 = Sensor.create(4L, Location.create(25.0, 35.0), ContainerState.FULL);
-        Sensor sensorHalf2 = Sensor.create(5L, Location.create(30.0, 40.0), ContainerState.HALF);
+        Sensor sensorFull1 = Sensor.create(UUID.randomUUID(), Location.create(10.0, 20.0), ContainerState.FULL);
+        Sensor sensorHalf1 = Sensor.create(UUID.randomUUID(), Location.create(15.0, 25.0), ContainerState.HALF);
+        Sensor sensorEmpty1 = Sensor.create(UUID.randomUUID(), Location.create(20.0, 30.0), ContainerState.EMPTY);
+        Sensor sensorEmpty2 = Sensor.create(UUID.randomUUID(), Location.create(20.0, 30.0), ContainerState.EMPTY);
+        Sensor sensorFull2 = Sensor.create(UUID.randomUUID(), Location.create(25.0, 35.0), ContainerState.FULL);
+        Sensor sensorHalf2 = Sensor.create(UUID.randomUUID(), Location.create(30.0, 40.0), ContainerState.HALF);
 
-        when(sensorRepository.findRelevantSensors(capacity))
+        when(sensorRepository.findUnassignedSensorsSortedByPriority())
                 .thenReturn(Flux.just(sensorFull1, sensorFull2, sensorHalf1, sensorHalf2));
 
 
-        Flux<Sensor> result = sensorService.fetchRelevantSensors(capacity);
+        Flux<Sensor> result = sensorService.fetchSensorsByPriorityState();
 
         StepVerifier.create(result)
                 .expectNext(sensorFull1)
@@ -127,7 +126,7 @@ public class SensorServiceTest {
                 .expectNext(sensorHalf2)
                 .verifyComplete();
 
-        verify(sensorRepository, times(1)).findRelevantSensors(capacity);
+        verify(sensorRepository, times(1)).findUnassignedSensorsSortedByPriority();
     }
 
 }

@@ -7,6 +7,8 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class MqttMessageListener implements MqttCallback {
 
@@ -38,7 +40,7 @@ public class MqttMessageListener implements MqttCallback {
 
             MqttSensorMessage sensorMessage = mapper.readValue(payload, MqttSensorMessage.class);
 
-            Long sensorId = sensorMessage.getSensorId();
+            UUID sensorId = sensorMessage.getSensorId();
             int state = sensorMessage.getState();
 
             messageService.handleMessage(sensorId, state).subscribe();

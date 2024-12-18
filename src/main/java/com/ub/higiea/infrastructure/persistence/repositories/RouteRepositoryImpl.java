@@ -22,7 +22,6 @@ public class RouteRepositoryImpl implements RouteRepository {
 
     }
 
-
     @Override
     public Mono<Route> findById(String id) {
         return routeEntityRepository.findById(id)

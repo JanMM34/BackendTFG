@@ -5,10 +5,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface SensorRepository {
 
-    Mono<Sensor> findById(Long id);
+    Mono<Sensor> findById(UUID id);
 
     Flux<Sensor> findAll();
 
@@ -16,6 +17,6 @@ public interface SensorRepository {
 
     Flux<Sensor> saveAll(List<Sensor> sensors);
 
-    Flux<Sensor> findRelevantSensors(int capacity);
+    Flux<Sensor> findUnassignedSensorsSortedByPriority();
 
 }

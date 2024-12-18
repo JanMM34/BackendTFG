@@ -1,7 +1,9 @@
 package com.ub.higiea.application.exception.notfound;
 
+import java.util.UUID;
+
 public class TruckNotFoundException extends RuntimeException {
-    public TruckNotFoundException(Long id) {
+    public TruckNotFoundException(UUID id) {
         super("Truck with id " + id + " not found");
     }
 }

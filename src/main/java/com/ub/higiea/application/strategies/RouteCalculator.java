@@ -1,4 +1,4 @@
-package com.ub.higiea.application.utils;
+package com.ub.higiea.application.strategies;
 
 import com.ub.higiea.domain.model.Location;
 import com.ub.higiea.domain.model.Sensor;

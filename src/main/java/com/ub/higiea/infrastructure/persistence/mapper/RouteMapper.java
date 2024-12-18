@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.geo.Point;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class RouteMapper {
 
@@ -79,7 +78,7 @@ public class RouteMapper {
 
         List<Sensor> sensors = sensorFeatures.stream()
                 .map(sensorFeature -> Sensor.create(
-                        (Long) sensorFeature.getProperties().get("sensorId"),
+                        (UUID) sensorFeature.getProperties().get("sensorId"),
                         Location.create(
                                 ((GeoJsonPoint) sensorFeature.getGeometry()).getY(),
                                 ((GeoJsonPoint) sensorFeature.getGeometry()).getX()

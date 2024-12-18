@@ -13,9 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class MqttConfig {
 
     private final MqttMessageListener mqttMessageListener;
-    private MqttClient client;
 
-    private String clientId;
+    private final String clientId;
 
     @Value("${mqtt.broker.url}")
     private String brokerUrl;
@@ -41,7 +40,7 @@ public class MqttConfig {
     public void connect() {
         try {
 
-            client = new MqttClient(brokerUrl, clientId, persistence);
+            MqttClient client = new MqttClient(brokerUrl, clientId, persistence);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);

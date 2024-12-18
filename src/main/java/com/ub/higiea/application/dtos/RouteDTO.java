@@ -89,7 +89,7 @@ public class RouteDTO implements Serializable {
         ObjectNode featureCollection = mapper.createObjectNode();
         featureCollection.put("type", "FeatureCollection");
         featureCollection.put("id",this.id);
-        featureCollection.put("truckId", this.truck.getId());
+        featureCollection.put("truckId", this.truck.getPlate());
 
         ArrayNode featuresArray = mapper.createArrayNode();
 
@@ -130,7 +130,7 @@ public class RouteDTO implements Serializable {
             sensorFeature.put("type", "Feature");
 
             ObjectNode sensorProperties = mapper.createObjectNode();
-            sensorProperties.put("sensorId", sensor.getId());
+            sensorProperties.put("sensorId", sensor.getId().toString());
             sensorProperties.put("containerState", sensor.getContainerState().name());
             sensorFeature.set("properties", sensorProperties);
 

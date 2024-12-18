@@ -2,14 +2,12 @@ package com.ub.higiea.application.services.domain;
 
 import com.ub.higiea.application.dtos.RouteSummaryDTO;
 import com.ub.higiea.application.exception.notfound.RouteNotFoundException;
-import com.ub.higiea.application.requests.RouteCreateRequest;
-import com.ub.higiea.application.utils.RouteCalculator;
+import com.ub.higiea.application.strategies.RouteCalculator;
 import com.ub.higiea.application.dtos.RouteDTO;
 import com.ub.higiea.domain.model.Route;
 import com.ub.higiea.domain.model.Sensor;
 import com.ub.higiea.domain.model.Truck;
 import com.ub.higiea.domain.repository.RouteRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -39,20 +37,31 @@ public class RouteService {
                 .map(RouteDTO::fromRoute);
     }
 
+    public Mono<Route> getRouteEntityById(String routeId) {
+        return routeRepository.findById(routeId)
+                .switchIfEmpty(Mono.error(new RouteNotFoundException(routeId)));
+    }
+
     public Mono<Route> calculateAndSaveRoute(Truck truck, List<Sensor> sensorWaypoints) {
-        return routeCalculator.calculateRoute(truck.getDepotLocation(),sensorWaypoints)
+        return routeCalculator.calculateRoute(truck.getDepotLocation(), sensorWaypoints)
                 .flatMap(result -> {
                     Route route = Route.create(
                             null,
                             truck,
-                            result.getOrderedSensors(),
-                            result.getTotalDistance(),
-                            result.getEstimatedTimeInSeconds(),
-                            result.getRouteGeometry()
+                            result.orderedSensors(),
+                            result.totalDistance(),
+                            result.estimatedTimeInSeconds(),
+                            result.routeGeometry()
                     );
-
                     return routeRepository.save(route);
                 });
+    }
+
+    public Mono<Boolean> checkIfLastSensor(Sensor sensor) {
+        return this.routeRepository.findById(sensor.getAssignedRoute().getId())
+                .map(route -> route.getSensors().getLast().getId().equals(sensor.getId()))
+                .defaultIfEmpty(false);
+
     }
 
 }

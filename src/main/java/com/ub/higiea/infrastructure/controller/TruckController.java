@@ -31,13 +31,6 @@ public class TruckController {
         return truckService.getAllTrucks();
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<TruckDTO> getTruck(@PathVariable("id") Long truckId) {
-        return truckService.getTruckById(truckId)
-                .onErrorMap(TruckNotFoundException.class, ex ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,ex.getMessage(),ex));
-    }
-
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<TruckDTO> createTruck(@Valid @RequestBody TruckCreateRequest truckCreateRequest) {
         return truckService.createTruck(truckCreateRequest)

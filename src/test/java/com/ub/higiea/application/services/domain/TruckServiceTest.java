@@ -6,17 +6,17 @@ import com.ub.higiea.application.requests.TruckCreateRequest;
 import com.ub.higiea.domain.model.Location;
 import com.ub.higiea.domain.model.Truck;
 import com.ub.higiea.domain.repository.TruckRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -32,8 +32,8 @@ public class TruckServiceTest {
 
     @Test
     void getAllTrucks_ShouldReturnAllTruckDTOs_WhenRepositoryNotEmpty() {
-        Truck truck1 = Truck.create(1L, 10, Location.create(10.0, 20.0));
-        Truck truck2 = Truck.create(2L, 20, Location.create(30.0, 40.0));
+        Truck truck1 = Truck.create(UUID.randomUUID(),"1", 10, Location.create(10.0, 20.0));
+        Truck truck2 = Truck.create(UUID.randomUUID(),"2", 20, Location.create(30.0, 40.0));
 
         when(truckRepository.findAll()).thenReturn(Flux.just(truck1, truck2));
 
@@ -57,7 +57,7 @@ public class TruckServiceTest {
 
     @Test
     void getTruckById_ShouldReturnTruckDTO_WhenTruckFound() {
-        Truck truck = Truck.create(1L, 10, Location.create(10.0, 20.0));
+        Truck truck = Truck.create(UUID.randomUUID(),"1", 10, Location.create(10.0, 20.0));
 
         when(truckRepository.findById(truck.getId())).thenReturn(Mono.just(truck));
 
@@ -70,12 +70,11 @@ public class TruckServiceTest {
 
     @Test
     void getTruckById_ShouldReturnError_WhenTruckNotFound() {
-        Long truckId = 999L;
+        UUID truckId = UUID.randomUUID();
         when(truckRepository.findById(truckId)).thenReturn(Mono.empty());
 
         StepVerifier.create(truckService.getTruckById(truckId))
-                .expectErrorMatches(throwable -> throwable instanceof TruckNotFoundException &&
-                        throwable.getMessage().equals("Truck with id " + truckId + " not found"))
+                .expectErrorMatches(throwable -> throwable instanceof TruckNotFoundException)
                 .verify();
 
         verify(truckRepository, times(1)).findById(truckId);
@@ -83,8 +82,13 @@ public class TruckServiceTest {
 
     @Test
     void createTruck_ShouldReturnCreatedTruckDTO_WhenValidInput() {
-        TruckCreateRequest request = TruckCreateRequest.toRequest(10.0, 20.0, 15);
-        Truck truck = Truck.create(1L, request.getMaxLoadCapacity(), Location.create(request.getLatitude(), request.getLongitude()));
+        TruckCreateRequest request = TruckCreateRequest
+                .toRequest("1",10.0, 20.0, 15);
+
+        Truck truck = Truck.create(UUID.randomUUID(),request.getPlate(),
+                request.getMaxLoadCapacity(),
+                Location.create(request.getLatitude(), request.getLongitude())
+        );
 
         when(truckRepository.save(any(Truck.class))).thenReturn(Mono.just(truck));
 

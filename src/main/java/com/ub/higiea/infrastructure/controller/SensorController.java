@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("sensors")
 @Validated
@@ -32,7 +34,7 @@ public class SensorController {
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<SensorDTO> getSensor(@PathVariable("id") Long sensorId) {
+    public Mono<SensorDTO> getSensor(@PathVariable("id") UUID sensorId) {
         return sensorService.getSensorById(sensorId)
                 .onErrorMap(SensorNotFoundException.class, ex ->
                         new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex));

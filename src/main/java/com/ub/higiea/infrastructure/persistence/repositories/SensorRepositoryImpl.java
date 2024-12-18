@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public class SensorRepositoryImpl implements SensorRepository {
@@ -20,7 +21,7 @@ public class SensorRepositoryImpl implements SensorRepository {
     }
 
     @Override
-    public Mono<Sensor> findById(Long id) {
+    public Mono<Sensor> findById(UUID id) {
         return sensorEntityRepository.findById(id)
                 .map(SensorMapper::toDomain);
     }
@@ -40,15 +41,17 @@ public class SensorRepositoryImpl implements SensorRepository {
 
     @Override
     public Flux<Sensor> saveAll(List<Sensor> sensors) {
-        return Flux.fromIterable(sensors)
+        List<SensorEntity> entities = sensors.stream()
                 .map(SensorMapper::toEntity)
-                .flatMap(sensorEntityRepository::save)
+                .toList();
+
+        return sensorEntityRepository.saveAll(entities)
                 .map(SensorMapper::toDomain);
     }
 
     @Override
-    public Flux<Sensor> findRelevantSensors(int capacity) {
-        return sensorEntityRepository.findRelevantSensors(capacity)
+    public Flux<Sensor> findUnassignedSensorsSortedByPriority() {
+        return sensorEntityRepository.findUnassignedFullOrHalfSensorsSortedByPriority()
                 .map(SensorMapper::toDomain);
     }
 

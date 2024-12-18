@@ -1,10 +1,9 @@
 package com.ub.higiea.infrastructure.config;
 
 import com.azure.maps.route.MapsRouteAsyncClient;
-import com.ub.higiea.application.utils.RouteCalculator;
+import com.ub.higiea.application.strategies.RouteCalculator;
 import com.ub.higiea.infrastructure.adapters.azuremaps.AzureMapsRouteCalculator;
-import com.ub.higiea.infrastructure.adapters.MockRouteCalculatorImpl;
-import org.springframework.beans.factory.annotation.Value;
+import com.ub.higiea.application.strategies.implementations.MockRouteCalculatorImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;

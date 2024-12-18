@@ -80,7 +80,13 @@
 
 <!-- Control panel -->
 <div class="control-panel">
-    <button id="addSensorBtn">Add New Sensor</button>
+    <label for="zoneSelect">Select Zone:</label>
+    <select id="zoneSelect">
+        <option value="all" selected>All Zones</option>
+        <option value="zone_a">Zone A</option>
+        <option value="zone_b">Zone B</option>
+    </select>
+    <button id="addSensorBtn" disabled>Add New Sensor</button>
     <label for="truckSelect">Select Truck:</label>
     <select id="truckSelect">
         <option value="" disabled selected>Loading trucks...</option>

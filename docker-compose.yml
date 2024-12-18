@@ -1,36 +1,54 @@
-version: '3.8'
-
 services:
-
-  higiea_app:
+  # Zone A Application Instance
+  higiea_zona_a:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/higiea_db
-      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017
-      MQTT_BROKER_URL: tcp://mosquitto:1883
-
     ports:
-      - "8080:8080"
+      - "8081:8080"
+    environment:
+      DB_URL: r2dbc:postgresql://zone_a_db/higiea_zone_a_db
+      DB_USERNAME: zone_a_user
+      DB_PASSWORD: zone_a_pass
+      MONGODB_URI: mongodb://mongo:27017/higiea-routes
+      MQTT_BROKER_URL: tcp://mqtt:1883
+      MQTT_BROKER_TOPIC: sensors/zone_a
     depends_on:
-      - postgres
-      - mosquitto
-      - mongodb
+      - zone_a_db
+      - mongo
+      - mqtt
 
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: higiea_db
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+  # Zone B Application Instance
+  higiea_zone_b:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "8082:8080"
+    environment:
+      DB_URL: r2dbc:postgresql://zone_b_db/higiea_zone_b_db
+      DB_USERNAME: zone_b_user
+      DB_PASSWORD: zone_b_pass
+      MONGODB_URI: mongodb://mongo:27017/higiea-routes
+      MQTT_BROKER_URL: tcp://mqtt:1883
+      MQTT_BROKER_TOPIC: sensors/zone_b
+    depends_on:
+      - zone_b_db
+      - mongo
+      - mqtt
 
-  mosquitto:
-    image: eclipse-mosquitto:2.0
+  # Shared MongoDB
+  mongo:
+    image: mongo:8.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mqtt:
+    image: eclipse-mosquitto:latest
+    container_name: mqtt-broker
     ports:
       - "1883:1883"
       - "9001:9001"
@@ -39,15 +57,29 @@ services:
       - mosquitto_data:/mosquitto/data
       - mosquitto_config:/mosquitto/config
 
-  mongodb:
-    image: mongo:8.0
-    ports:
-      - "27017:27017"
+  # Zone A PostgreSQL
+  zone_a_db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: higiea_zone_a_db
+      POSTGRES_USER: zone_a_user
+      POSTGRES_PASSWORD: zone_a_pass
     volumes:
-      - mongo_data:/data/db
+      - zone_a_pg_data:/var/lib/postgresql/data
+
+  # Zone B PostgreSQL
+  zone_b_db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: higiea_zone_b_db
+      POSTGRES_USER: zone_b_user
+      POSTGRES_PASSWORD: zone_b_pass
+    volumes:
+      - zone_b_pg_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
-  mosquitto_data:
   mongo_data:
+  zone_a_pg_data:
+  zone_b_pg_data:
+  mosquitto_data:
   mosquitto_config:
